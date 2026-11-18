@@ -1,0 +1,129 @@
+name: Týdenní přepočet překryvů CHÚ
+
+on:
+  schedule:
+    # Pondělí 06:17 UTC (přibližně 07:17/08:17 českého času).
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+# Zde se zveřejňují jen výsledky `--mode=public`.
+# Interní diagnostika se nikam do GitHub Pages NEKOPÍRUJE.
+permissions:
+  contents: write    # umožní založit datovaný Release
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "tydenni-prekryvy-pages"
+  cancel-in-progress: false
+
+jobs:
+  vypocet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Získání zdrojového kódu
+        uses: actions/checkout@v4
+      - name: Nainstalování R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - name: Nainstalování R balíčků a systémových závislostí
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::sf
+            any::dplyr
+            any::httr
+            any::jsonlite
+            any::openxlsx
+      # Každý runner začíná s prázdným diskem. Obnovíme jen vstupní cache,
+      # kterou R nezávisle ověří proti veřejnému REST zdroji. Není-li z něj
+      # možné prokazatelně vyčíst změnu, R vrstvu vždy stáhne znovu.
+      - name: Obnovení ověřitelné cache vstupních geodat
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: gis-v063-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            gis-v063-${{ runner.os }}-
+      - name: Kontrola syntaxe celého R skriptu (před dlouhým během)
+        run: Rscript -e "invisible(parse(file='prekryvy_uzemi.R')); cat('SYNTAXE OK\n')"
+      - name: Rychlé geometrické testy
+        run: Rscript prekryvy_uzemi.R --self-test-geometrie=true
+      - name: Úplný výpočet pro celou ČR
+        shell: bash
+        run: |
+          mkdir -p vystupy site
+          Rscript prekryvy_uzemi.R \
+            --mode=public --oop=true --test=false \
+            --cache=true --refresh=false --verify-cache-online=true \
+            --cache-dir=cache \
+            --site-dir=site \
+            --out="vystupy/prekryvy_$(date -u +%Y-%m-%d).xlsx"
+      # Nepublikujeme obrovské dočasné soubory. Limit 250 MB drží
+      # přenosy a skladování Actions cache v rozumné míře.
+      - name: Kontrola velikosti cache
+        id: cache_size
+        shell: bash
+        run: |
+          size=$(du -sm cache 2>/dev/null | cut -f1 || echo 0)
+          echo "Mezipaměť: ${size} MiB"
+          if [ "${size:-0}" -le 250 ]; then
+            echo "save=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "save=false" >> "$GITHUB_OUTPUT"
+            echo "Cache překračuje 250 MiB, nebude ukládána do GitHub Actions."
+          fi
+      - name: Uložení omezené cache na další týdny
+        if: steps.cache_size.outputs.save == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: cache
+          key: gis-v063-${{ runner.os }}-${{ github.run_id }}
+      - name: Ověření veřejných souborů
+        shell: bash
+        run: |
+          test -s site/index.html
+          test -s site/prehled.json
+          test -s site/manifest.json
+          test -s site/prekryvy_aktualni.xlsx
+          ! find site -type f | grep -E '(nesoulad|diagnostik|\.gpkg$)'
+      - name: Zákaz publikace testovacího nebo neúplného výpočtu
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          manifest = json.loads(Path('site/manifest.json').read_text(encoding='utf-8'))
+          n = manifest.get('pocet_uzemi', 0)
+          if manifest.get('test') is not False or not isinstance(n, int) or n < 6000:
+              raise SystemExit(f'ODMÍTNUTO: veřejný výstup není úplný výpočet ČR: {manifest}')
+          if Path('site/index.html').stat().st_size < 1_000_000:
+              raise SystemExit('ODMÍTNUTO: HTML je podezřele malé; zkontrolujte generování úplných dat')
+          print(f'Plný veřejný výstup ověřen: {n} území')
+          PY
+      - name: Připravení stránky GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Archivní datovaný Release s úplným XLSX
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          tag="data-$(date -u +%Y-%m-%d)"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" vystupy/*.xlsx \
+              --title="Překryvy CHÚ – $(date -u +%Y-%m-%d)" \
+              --notes="Automatický úplný přepočet. Metodika a datové zdroje uvnitř XLSX. PUOS a drobné nesoulady RP viz disclaimer."
+          fi
+  publikace:
+    needs: vypocet
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Zveřejnění stránky
+        id: deploy
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Překryvy chráněných území ČR – vlastní tabulka</title>
+<style>
+:root{font-family:system-ui,'Segoe UI',sans-serif;color:#172d39;background:#f5f7f8;font-size:14px}*{box-sizing:border-box}body{margin:0}main{padding:22px 22px 35px;max-width:100%}h1{font-size:25px;letter-spacing:-.5px;margin:0 0 5px}h2{font-size:15px;margin:0 0 12px}p{margin:6px 0 12px}.muted{color:#586e7b}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}.top-right{display:flex;gap:8px;flex-wrap:wrap}.button{border:1px solid #9db2c0;border-radius:8px;background:#fff;color:#173a4d;padding:10px 14px;font:600 14px system-ui;cursor:pointer}.button:hover{background:#eaf2f6}.button.primary{background:#086e5d;color:white;border-color:#086e5d;font-size:16px;padding:13px 19px}.button.primary:hover{background:#055b4c}.layout{display:grid;grid-template-columns:1fr 1.05fr;gap:12px;margin:14px 0}.panel{border:1px solid #d6e0e6;border-radius:10px;background:#fff;padding:15px;min-width:0}.smalllabel{font-size:12px;color:#586e7b;margin:8px 0 5px;display:block}label.check{display:inline-flex;align-items:center;gap:5px;cursor:pointer;margin:3px 10px 3px 0;font-size:13px;white-space:nowrap}input[type=checkbox]{accent-color:#0a7361;width:15px;height:15px;margin:0}input[type=text]{border:1px solid #bacbd4;padding:10px 11px;border-radius:7px;min-height:39px;width:100%;font:inherit}.options{display:flex;flex-wrap:wrap;align-items:center;gap:1px 0}.group-title{color:#36505e;font-size:12px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;margin:10px 0 5px}.group-categories{display:grid;grid-template-columns:repeat(auto-fill,minmax(99px,1fr));gap:1px 3px}.group-categories label{margin:5px 0}.note{font-size:12px;line-height:1.45;color:#526675}.subline{border-top:1px solid #e0e8ec;margin:10px 0}.status{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;margin:8px 0}.count{font-weight:700}.table-wrap{border:1px solid #d4dee5;border-radius:10px;overflow:auto;background:white;max-height:68vh}.data{border-collapse:separate;border-spacing:0;font-size:12px;white-space:nowrap;min-width:100%}th,td{padding:7px 8px;border-bottom:1px solid #e6ecf0;border-right:1px solid #e8eef2;max-width:340px;overflow:hidden;text-overflow:ellipsis;height:31px}th{position:sticky;top:0;z-index:3;background:#edf3f5;text-align:left;font-weight:650;line-height:1.15;white-space:normal;vertical-align:bottom;min-height:41px}th.group{top:0;text-align:center;border-bottom:1px solid #d1e0e5;background:#dbe6e8;height:35px}th.second{top:35px;height:48px;background:#edf3f5}th.base-head{top:0;height:83px;vertical-align:bottom;background:#edf3f5}td.numeric,th.numeric{text-align:right;font-variant-numeric:tabular-nums}td.numeric{font-family:'Segoe UI',system-ui,sans-serif}td.code,th.code{min-width:77px;max-width:86px;width:77px}td.cat,th.cat{min-width:92px;max-width:100px;width:92px}td.name,th.name{min-width:200px;max-width:230px;width:200px}td.list-cell{min-width:210px;max-width:300px;width:260px}td.number-cell,th.number-cell{width:83px;min-width:72px;max-width:95px}td.pct-cell,th.pct-cell{width:79px;min-width:70px;max-width:86px}td:nth-child(1),th:nth-child(1){position:sticky;left:0;z-index:2;background:#fff}th:nth-child(1){z-index:5;background:#edf3f5}td:nth-child(2),th:nth-child(2){position:sticky;left:77px;z-index:2;background:#fff}th:nth-child(2){z-index:5;background:#edf3f5}td:nth-child(3),th:nth-child(3){position:sticky;left:169px;z-index:2;background:#fff;box-shadow:2px 0 4px #253f4f15}th:nth-child(3){z-index:5;background:#edf3f5}tbody tr:nth-child(even) td{background:#f7fafb}tbody tr:hover td{background:#edf7f4}tbody td{cursor:zoom-in}tbody td:focus-visible{outline:2px solid #087866;outline-offset:-2px}.bulk{display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px}.bulk button{font-size:12px;padding:5px 9px;border:1px solid #cad9e0;border-radius:6px;background:#f5f9fa;cursor:pointer}.bulk button:hover{background:#e3f2ee}.modal-backdrop{position:fixed;inset:0;background:#0e2234ad;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px}.modal-box{width:min(850px,96vw);max-height:85vh;display:flex;flex-direction:column;background:white;border-radius:12px;box-shadow:0 18px 70px #112b3559;overflow:hidden}.modal-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:17px 18px;border-bottom:1px solid #dce6e9}.modal-top h2{margin:0;line-height:1.5}.modal-content{white-space:pre-wrap;overflow:auto;overflow-wrap:anywhere;padding:20px;font-size:14px;line-height:1.65}.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 17px;border-top:1px solid #dce6e9}.table-wrap thead{position:relative;z-index:3}.table-wrap tbody{position:relative;z-index:1}td a{color:#096d60;text-decoration:none}td a:hover{text-decoration:underline}.pager{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-top:10px}.pager button{padding:6px 11px}.pill{border-radius:100px;background:#e6f1ee;color:#216657;padding:5px 10px;font-size:12px}.hidden{display:none!important}@media(max-width:900px){.layout{grid-template-columns:1fr}.top{align-items:flex-start}main{padding:14px}}
+
+/* Checkboxová hierarchie: nadřazená políčka mohou být částečně vybraná. */
+.category-tree{display:flex;flex-direction:column;gap:5px;margin:8px 0 13px}
+.category-tree .tree-node{min-width:0}
+.category-tree .tree-label{display:flex;align-items:center;min-height:25px}
+.category-tree .tree-label label.check{font-weight:650;margin:3px 6px 3px 0}
+.category-tree .tree-label.leaf label.check{font-weight:400}
+.category-tree .tree-children{margin:2px 0 4px 9px;padding:1px 0 2px 14px;border-left:1px solid #d8e4e8}
+.category-tree .tree-children.leaves{display:flex;flex-wrap:wrap;column-gap:17px;row-gap:1px}
+.category-tree .tree-children.leaves .tree-label label.check{margin:3px 0}
+.category-tree .tree-node.root>.tree-label{border-bottom:1px solid #e1e9ec;padding-bottom:6px;margin-bottom:7px}
+.category-tree .tree-node.root>.tree-children{border-left:0;margin-left:0;padding-left:0}
+.category-tree .tree-children>.tree-node+.tree-node{margin-top:5px}
+.selection-head{margin:5px 0 3px;font-weight:650}
+.selection-head label.check{font-weight:650}
+.options-indented{padding-left:22px;margin:4px 0 8px}
+.options-indented label.check{margin-right:16px}
+@media(max-width:600px){.category-tree .tree-children{padding-left:9px;margin-left:5px}.category-tree .tree-children.leaves{gap:2px 12px}}
+
+/* v0.6.5.4 — úsporné uspořádání formuláře */
+.layout{grid-template-columns:minmax(0,0.92fr) minmax(0,1.08fr);gap:12px;align-items:start}
+.panel{padding:12px 14px 10px}
+.panel h2{margin:0 0 7px;font-size:15px}
+.category-tree{margin:4px 0 9px;gap:0}
+.category-tree .tree-node.root>.tree-label{margin:0 0 7px;padding:0 0 5px;min-height:24px}
+.category-tree .tree-label{min-height:21px}
+.category-tree .tree-label label.check{margin:2px 4px 2px 0}
+.category-tree .tree-children{border-left:none;padding:0;margin:0}
+.category-tree .tree-children.top-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 9px;align-items:start}
+.category-tree .top-groups>.tree-node{border:1px solid #e0e9ed;border-radius:7px;padding:7px 9px;background:#f9fbfc;min-width:0}
+.category-tree .top-groups>.tree-node[data-node=zchu]{grid-column:1;grid-row:1}
+.category-tree .top-groups>.tree-node[data-node=opzchu]{grid-column:2;grid-row:1}
+.category-tree .top-groups>.tree-node[data-node=natura]{grid-column:1;grid-row:2}
+.category-tree .top-groups>.tree-node[data-node=SCHU]{grid-column:2;grid-row:2}
+.category-tree .top-groups>.tree-node[data-node=VOJ_UJEZD]{grid-column:1;grid-row:3}
+.category-tree .top-groups>.tree-node>.tree-label label.check{font-weight:700}
+.category-tree .top-groups>.tree-node>.tree-children{padding-left:9px;margin-left:7px;border-left:1px solid #d6e3e8}
+.category-tree .top-groups>.tree-node[data-node=SCHU]>.tree-label label.check,.category-tree .top-groups>.tree-node[data-node=VOJ_UJEZD]>.tree-label label.check{font-weight:600}
+.category-tree .tree-children>.tree-node+.tree-node{margin-top:3px}
+.category-tree .tree-node.level-2{display:flex;flex-wrap:wrap;align-items:center;column-gap:8px;row-gap:0}
+.category-tree .tree-node.level-2>.tree-label{flex:0 0 auto}
+.category-tree .tree-node.level-2>.tree-children.leaves{flex:1 1 auto;min-width:0;display:flex;gap:0 9px;flex-wrap:wrap;align-items:center}
+.category-tree .tree-children.leaves{display:flex;flex-wrap:wrap;column-gap:13px;row-gap:0}
+.column-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}
+.option-card{background:#f9fbfc;border:1px solid #e0e9ed;border-radius:7px;padding:6px 9px}
+.option-card .selection-head{margin:0 0 3px}
+.option-card .options-indented{padding-left:9px;margin:0;gap:0 12px}
+.option-card .options label.check{margin:2px 3px 2px 0}
+.selection-head{margin:2px 0}
+.panel .smalllabel{margin:7px 0 3px}
+.panel input[type=text]{padding:7px 10px;min-height:35px}
+.panel .note{font-size:11px;line-height:1.35;margin:5px 0 1px}
+.panel .category-tree+.smalllabel{margin-top:9px}
+@media(max-width:1100px){.layout{grid-template-columns:1fr}.category-tree .tree-children.top-groups{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.column-options{grid-template-columns:1fr}.category-tree .tree-children.top-groups{grid-template-columns:1fr}.category-tree .top-groups>.tree-node[data-node]{grid-column:auto;grid-row:auto}.category-tree .tree-node.level-2{display:block}.category-tree .tree-node.level-2>.tree-children.leaves{padding-left:10px}.category-tree .top-groups>.tree-node{padding:6px 8px}}
+
+/* v0.6.5.5: klikatelné záhlaví všech datových sloupců */
+.sort-button{display:inline-flex;align-items:center;justify-content:space-between;gap:7px;width:100%;min-width:0;min-height:25px;padding:2px 1px;border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;text-align:inherit;line-height:1.18;white-space:normal;cursor:pointer}
+.sort-button:hover{color:#075f51;text-decoration:underline}
+.sort-button:focus-visible{outline:2px solid #076f5e;border-radius:3px}
+.sort-icon{color:#607b84;font-size:11px;flex:0 0 auto;white-space:nowrap}
+.sort-button.is-sorted .sort-icon{color:#04705e;font-weight:900}
+th.numeric .sort-button{justify-content:flex-end;text-align:right}
+/* Dvouvrstvé záhlaví: druhý řádek NESMÍ převzít sticky fixaci prvních 3 sloupců. */
+#thead tr:nth-child(2) th:nth-child(-n+3){left:auto;box-shadow:none;z-index:3}
+#sortHint{flex:1 1 280px;text-align:center}
+@media(max-width:800px){#sortHint{text-align:left}}
+
+/* Barevné odlišení patnácti kategorií; paleta je společná s exportem XLSX. */
+.data th.group[data-cat]{background:var(--cat-dark);color:#fff;border-bottom:2px solid var(--cat-dark)}
+.data th.group[data-cat] .sort-icon{color:#fff}
+.data th.second[data-cat]{background:var(--cat-light);border-bottom:2px solid var(--cat-dark)}
+.data td.cat[data-cat]{background:var(--cat-light)!important;font-weight:650;border-left:3px solid var(--cat-dark)}
+.data td.code[data-cat]{border-left:3px solid var(--cat-dark)}
+.data td.name[data-cat]{box-shadow:inset 0 0 0 9999px color-mix(in srgb,var(--cat-light) 44%,transparent),2px 0 4px #253f4f15}
+.data tbody tr:hover td.cat[data-cat]{filter:brightness(.97)}
+</style></head><body><main>
+<header class="top"><div><h1>Překryvy chráněných území ČR</h1><p class="muted" id="metadata">Interaktivní sestavení pohledu nad geografickými překryvy</p></div><div class="top-right"><button id="download" class="button primary">↓ Stáhnout zobrazený pohled (XLSX)</button></div></header>
+<div class="layout"><section class="panel"><h2>Řádky · která území zobrazit</h2><div id="rowCategories" class="category-tree"></div><label class="smalllabel" for="selected">Konkrétní území · název nebo kód ÚSOP; více položek odděl středníkem</label><input id="selected" type="text" placeholder="např. Radotínské údolí; 171; Dolní Sázava"><p class="note">Při vyplnění konkrétních území se zobrazí pouze nalezené záznamy v rámci zaškrtnutých kategorií. Kód ÚSOP se hledá přesně; název i jeho část bez ohledu na diakritiku.</p></section>
+<section class="panel"><h2>Sloupce · co zahrnout</h2><div id="globalBulk" class="selection-head"></div><div class="column-options"><div class="option-card"><div id="baseBulk" class="selection-head"></div><div class="options options-indented" id="baseColumns"></div></div><div class="option-card"><div id="metricsBulk" class="selection-head"></div><div class="options options-indented" id="metrics"></div></div></div><div id="colCategories" class="category-tree"></div><p class="note">Plocha a podíl překryvu s kategorií se počítají z geometrického sjednocení průniků, aby se překrývající se referenční polygony nezapočítaly dvakrát. Nuly jsou také zachovány.</p></section></div>
+<div class="status"><span class="count" id="count"></span><span class="note" id="sortHint" aria-live="polite"></span><span class="pill" id="cols"></span></div>
+<div class="table-wrap" id="tableWrap"><table class="data" id="table"><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+<div class="pager"><span class="note" id="pageInfo"></span><button class="button" id="prev">← Předchozí</button><button class="button" id="next">Další →</button></div>
+<p class="note">Údaje představují geometrický výpočet, nikoli právní závěr o působnosti OOP. Ořez na hranice krajů ČÚZK; PUOS nejsou zahrnuty. V exportu jsou všechny řádky odpovídající výběru, nikoli jen aktuální stránka tabulky.</p>
+</main><div id="cellModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-box"><div class="modal-top"><div><div class="muted" id="modalArea"></div><h2 id="modalTitle">Úplný obsah buňky</h2></div><button type="button" class="button" id="modalCloseTop" aria-label="Zavřít">×</button></div><div class="modal-content" id="modalContent"></div><div class="modal-actions"><button type="button" class="button" id="modalCopy">Kopírovat obsah</button><button type="button" class="button" id="modalClose">Zavřít</button></div></div></div><script id="records" type="application/json">__DATA_JSON__</script><script>
+'use strict';
+// Web UI v0.6.5.7: oprava přesných číselných formátů XLSX, bez samotné desetinné čárky.
+const source=JSON.parse(document.getElementById('records').textContent);
+const categories=['NPR','NPP','PR','PP','NP','CHKO','EVL','PO','OP_NPR','OP_NPP','OP_PR','OP_PP','OP_NP','SCHU','VOJ_UJEZD'];
+// Barvy: syté záhlaví a tlumené pozadí datových buněk stejné kategorie.
+const catPalette={
+ NPR:['1D6B49','E3F3E9'],NPP:['32814D','EBF7E8'],PR:['477B50','EFF6E5'],PP:['6A9847','F1F8E7'],
+ NP:['1C5C83','E5F1F9'],CHKO:['337AA1','EAF5FC'],
+ EVL:['65489B','EFEAF9'],PO:['895CAA','F4ECFB'],
+ OP_NPR:['956D1B','FBF3DE'],OP_NPP:['A57924','FAF1D6'],OP_PR:['B48030','FBF1E2'],OP_PP:['B4944D','FCF6E6'],OP_NP:['B56C36','FDF0E5'],
+ SCHU:['4A7780','E8F2F4'],VOJ_UJEZD:['6B596A','F2EDF1']
+};
+const catVar=cat=>{const [dark,light]=catPalette[cat]||['526674','F2F6F8'];return `style="--cat-dark:#${dark};--cat-light:#${light}" data-cat="${cat}"`};
+const names={NPR:'NPR',NPP:'NPP',PR:'PR',PP:'PP',EVL:'EVL',PO:'PO',CHKO:'CHKO',NP:'NP',OP_NPR:'OP NPR',OP_NPP:'OP NPP',OP_PR:'OP PR',OP_PP:'OP PP',OP_NP:'OP NP',SCHU:'Smluvní CHÚ',VOJ_UJEZD:'Voj. újezd'};
+const basics=[['area','Plocha území (ha)'],['count','Celkový počet překryvů'],['all','Výpis všech překryvů'],['oop','Geometricky určené OOP']];
+const metrics=[['count','Počet překryvů'],['names','Názvy překrývajících se území'],['area','Plocha překryvu (ha)'],['pct','Podíl území v překryvu (%)']];
+const state={rowCats:new Set(categories),colCats:new Set(categories),base:new Set(basics.map(x=>x[0])),metrics:new Set(metrics.map(x=>x[0])),page:0,sortKey:null,sortDir:1};
+const $=id=>document.getElementById(id);
+// Hierarchie odpovida kategoriim skutecne pritomnym v datech (napr. OP CHKO nema samostatny typ).
+const categoryTree={id:'all',label:'Všechny kategorie',children:[
+  {id:'zchu',label:'ZCHÚ',children:[
+    {id:'mzchu',label:'MZCHÚ',children:[{id:'NPR',label:'NPR'},{id:'NPP',label:'NPP'},{id:'PR',label:'PR'},{id:'PP',label:'PP'}]},
+    {id:'vzchu',label:'VZCHÚ',children:[{id:'NP',label:'NP'},{id:'CHKO',label:'CHKO'}]}
+  ]},
+  {id:'natura',label:'Natura 2000',children:[{id:'EVL',label:'EVL'},{id:'PO',label:'PO'}]},
+  {id:'opzchu',label:'OP ZCHÚ',children:[
+    {id:'opmzchu',label:'OP MZCHÚ',children:[{id:'OP_NPR',label:'NPR'},{id:'OP_NPP',label:'NPP'},{id:'OP_PR',label:'PR'},{id:'OP_PP',label:'PP'}]},
+    {id:'OP_NP',label:'OP NP'}
+  ]},
+  {id:'SCHU',label:'SCHÚ'},
+  {id:'VOJ_UJEZD',label:'VÚ'}
+]};
+function nodeLeaves(node){return node.children?node.children.flatMap(nodeLeaves):[node.id]}
+if(categories.length!==nodeLeaves(categoryTree).length ||
+   categories.some(c=>!nodeLeaves(categoryTree).includes(c)))throw Error('Nesoulad kategorií s hierarchickým výběrem');
+const controlRegistry=[];
+function addCheck(host,label,parts,id,bold=false){
+  const wrap=document.createElement('label');wrap.className='check';
+  const input=document.createElement('input');input.type='checkbox';input.id=id;
+  input.setAttribute('aria-label',label);
+  wrap.append(input,document.createTextNode(label));host.appendChild(wrap);
+  if(bold)wrap.style.fontWeight='650';
+  controlRegistry.push({input,parts});
+  input.addEventListener('change',()=>{
+    for(const part of parts)for(const k of part.keys){
+      if(input.checked)part.set.add(k);else part.set.delete(k);
+    }
+    state.page=0;render();
+  });
+  return input;
+}
+function buildCategoryNode(node,parent,set,prefix,depth=0){
+  const item=document.createElement('div');item.className='tree-node level-'+depth+(depth===0?' root':'');item.dataset.node=node.id;
+  const label=document.createElement('div');label.className='tree-label'+(node.children?'':' leaf');
+  addCheck(label,node.label,[{set,keys:nodeLeaves(node)}],prefix+'-'+node.id,Boolean(node.children));
+  item.appendChild(label);
+  if(node.children){
+    const child=document.createElement('div');
+    child.className='tree-children'+(node.children.every(x=>!x.children)?' leaves':'')+(node.id==='all'?' top-groups':'');
+    for(const sub of node.children)buildCategoryNode(sub,child,set,prefix,depth+1);
+    item.appendChild(child);
+  }
+  parent.appendChild(item);
+}
+const rowTree=structuredClone(categoryTree);
+const colTree=structuredClone(categoryTree);colTree.label='Všechny kategorie překryvů';
+buildCategoryNode(rowTree,$('rowCategories'),state.rowCats,'rows');
+buildCategoryNode(colTree,$('colCategories'),state.colCats,'cols');
+addCheck($('globalBulk'),'Všechny volitelné sloupce',[
+  {set:state.base,keys:basics.map(x=>x[0])},
+  {set:state.colCats,keys:categories},
+  {set:state.metrics,keys:metrics.map(x=>x[0])}
+],'all-columns',true);
+addCheck($('baseBulk'),'Základní sloupce',[{set:state.base,keys:basics.map(x=>x[0])}],'all-base',true);
+for(const [id,label] of basics)addCheck($('baseColumns'),label,[{set:state.base,keys:[id]}],'base-'+id);
+addCheck($('metricsBulk'),'Všechny typy údajů o překryvech',
+  [{set:state.metrics,keys:metrics.map(x=>x[0])}],'all-metrics',true);
+for(const [id,label] of metrics)addCheck($('metrics'),label,[{set:state.metrics,keys:[id]}],'metric-'+id);
+function syncChecks(){
+  for(const {input,parts} of controlRegistry){
+    const n=parts.reduce((sum,p)=>sum+p.keys.length,0);
+    const chosen=parts.reduce((sum,p)=>sum+p.keys.filter(k=>p.set.has(k)).length,0);
+    input.checked=chosen===n;
+    input.indeterminate=chosen>0&&chosen<n;
+    input.setAttribute('aria-checked',input.indeterminate?'mixed':String(input.checked));
+  }
+}
+$('selected').addEventListener('input',()=>{state.page=0;render()});
+const norm=s=>String(s??'').toLocaleLowerCase('cs').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// Stejna presnost na obrazovce i v XLSX: 4 platne cislice,
+// zaokrouhlovat nejvyse na jednotky. Velmi male nenulove hodnoty nezmizí.
+const decimalPlaces=n=>!Number.isFinite(n)||n===0?0:Math.max(0,3-Math.floor(Math.log10(Math.abs(n))));
+const roundedText=n=>{const v=Number(n??0);if(!Number.isFinite(v))return '';if(v===0)return '0';
+  const d=decimalPlaces(v);return v.toFixed(Math.min(d,100)).replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,'');};
+const fmt=n=>{const t=roundedText(n);if(!t)return '';const [a,b]=t.split('.');
+  return a.replace(/\B(?=(\d{3})+(?!\d))/g,' ')+(b?','+b:'');};
+// OOP v JSON je složený text (úřad: X %). Každé procento zaokrouhlit
+// stejnou funkcí jako samostatná čísla a nenechat v něm původních 8+ míst.
+const formatOop=value=>String(value??'').replace(/(:\s*)(-?\d+(?:[.,]\d+)?(?:[eE][+-]?\d+)?)(\s*%)/g,
+  (_,before,num,after)=>before+fmt(Number(num.replace(',','.')))+after);
+const displayValue=(col,row)=>{const raw=col.val(row);return col.num?fmt(raw):col.key==='base-oop'?formatOop(raw):String(raw??'')};
+const getCat=(r,c)=> (r.skupiny||[]).find(x=>x.typ===c)||{pocet:0,ha:0,pct:0,seznam:''};
+// Výchozí pořadí: MZCHÚ (NPR, NPP, PR, PP), VZCHÚ (NP, CHKO), Natura (EVL, PO),
+// jednotlivá OP, SCHÚ a vojenské újezdy. Uvnitř kategorie řadíme území podle názvu.
+const categoryRank=new Map(categories.map((v,i)=>[v,i]));
+const csCollator=new Intl.Collator('cs',{numeric:true,sensitivity:'base'});
+const catIndex=c=>categoryRank.has(c)?categoryRank.get(c):categories.length;
+const compareDefault=(a,b)=>catIndex(a.kategorie)-catIndex(b.kategorie)||
+  csCollator.compare(String(a.nazev??''),String(b.nazev??''))||
+  csCollator.compare(String(a.kod??''),String(b.kod??''));
+// Textový výpis všech překryvů vzniká v R; pro web i export jej seřadíme podle
+// kategorií, aniž bychom měnili jednotlivé položky či přesné výměry.
+function orderOverlapText(value){
+  if(!value)return '';
+  const items=String(value).split(/;\s*/).filter(Boolean);
+  items.sort((a,b)=>{
+    const aa=a.match(/^([A-Z_]+)\s/),bb=b.match(/^([A-Z_]+)\s/);
+    return catIndex(aa?.[1])-catIndex(bb?.[1]);
+  });
+  return items.join('; ');
+}
+for(const item of source)item.prekryvy=orderOverlapText(item.prekryvy);
+const defaultRows=[...source].sort(compareDefault);
+// Každá hlavička datového sloupce je řaditelná (vzestupně, sestupně, výchozí).
+// Čísla se porovnávají v původní přesnosti, nikoli zaokrouhlená zobrazení.
+function compareColumn(a,b,col){
+  const va=col.val(a),vb=col.val(b);
+  const empty=v=>v===null||v===undefined||v==='';
+  if(empty(va)||empty(vb))return empty(va)===empty(vb)?0:(empty(va)?1:-1);
+  if(col.key==='cat')return catIndex(va)-catIndex(vb);
+  if(col.num){const x=Number(va),y=Number(vb);if(!Number.isFinite(x)||!Number.isFinite(y))return 0;return x-y}
+  return csCollator.compare(String(va),String(vb));
+}
+function sortedRows(cols){
+  const terms=tokens(),matches=defaultRows.filter(r=>state.rowCats.has(r.kategorie)&&
+    (!terms.length||terms.some(t=>String(r.kod??'').trim()===t||norm(r.nazev).includes(norm(t)))));
+  const col=cols.find(c=>c.key===state.sortKey);
+  if(!col)return matches;
+  return matches.sort((a,b)=>{
+    // Chybějící údaje vždy na konec, i při sestupném řazení.
+    const va=col.val(a),vb=col.val(b),ea=va==null||va==='',eb=vb==null||vb==='';
+    if(ea!==eb)return ea?1:-1;
+    return state.sortDir*compareColumn(a,b,col)||compareDefault(a,b);
+  });
+}
+function sortableHeader(c){
+  const active=state.sortKey===c.key;
+  const symbol=!active?'↕':state.sortDir===1?'▲':'▼';
+  const fullname=(c.group?names[c.group]+' – ':'')+c.label;
+  return `<button type="button" class="sort-button ${active?'is-sorted':''}" data-sort="${escapeHTML(c.key)}" title="Seřadit podle: ${escapeHTML(fullname)}" aria-label="Seřadit podle: ${escapeHTML(fullname)}">${escapeHTML(c.label)}<span class="sort-icon" aria-hidden="true">${symbol}</span></button>`;
+}
+
+const tokens=()=> $('selected').value.split(';').map(s=>s.trim()).filter(Boolean);
+function filtered(){return sortedRows(columns())}
+function columns(){const c=[{key:'code',label:'Kód ÚSOP',kind:'code',val:r=>String(r.kod??'')},{key:'cat',label:'Kategorie',kind:'cat',val:r=>r.kategorie},{key:'name',label:'Název území',kind:'name',val:r=>r.nazev}];
+for(const [id,name] of basics)if(state.base.has(id))c.push({key:'base-'+id,label:name,kind:id==='area'||id==='count'?'number-cell':id==='oop'?'oop-cell':'list-cell',num:id==='area'||id==='count',val:r=>({area:r.plocha,count:r.pocet,all:r.prekryvy,oop:r.oop})[id]});
+for(const cat of categories) if(state.colCats.has(cat))for(const [id,label] of metrics)if(state.metrics.has(id))c.push({key:cat+'-'+id,group:cat,label,kind:id==='names'?'list-cell':id==='pct'?'pct-cell':'number-cell',num:id!=='names',val:r=>{const x=getCat(r,cat);return {count:x.pocet,names:x.seznam,area:x.ha,pct:x.pct}[id]}});
+return c}
+function td(cell,c,idx){const display=displayValue(c,cell);const cat=c.key==='cat'||c.key==='code'||c.key==='name'?catVar(cell.kategorie):'';
+ return `<td data-col="${idx}" tabindex="0" title="Kliknutím zobrazit celý obsah" class="${escapeHTML(c.kind)} ${c.num?'numeric':''}" ${cat}>${escapeHTML(display)}</td>`}
+function render(){syncChecks();const cols=columns();if(state.sortKey&&!cols.some(c=>c.key===state.sortKey)){state.sortKey=null;state.sortDir=1}const rows=sortedRows(cols),len=100,max=Math.max(0,Math.ceil(rows.length/len)-1);state.page=Math.min(state.page,max);
+const first=cols.filter(x=>!x.group),grouped=categories.filter(c=>cols.some(x=>x.group===c));
+const top=`<tr>${first.map(x=>`<th class="base-head ${x.kind} ${x.num?'numeric':''}" rowspan="2" aria-sort="${state.sortKey===x.key?(state.sortDir===1?'ascending':'descending'):'none'}">${sortableHeader(x)}</th>`).join('')}${grouped.map(g=>`<th class="group" colspan="${cols.filter(x=>x.group===g).length}" ${catVar(g)}>${escapeHTML(names[g])}</th>`).join('')}</tr>`;
+const second=`<tr>${grouped.map(g=>cols.filter(x=>x.group===g).map(x=>`<th class="second ${x.kind} ${x.num?'numeric':''}" ${catVar(g)} aria-sort="${state.sortKey===x.key?(state.sortDir===1?'ascending':'descending'):'none'}">${sortableHeader(x)}</th>`).join('')).join('')}</tr>`;
+$('thead').innerHTML=top+second;
+$('tbody').innerHTML=rows.slice(state.page*len,(state.page+1)*len).map(r=>`<tr>${cols.map((c,i)=>td(r,c,i)).join('')}</tr>`).join('')||`<tr><td colspan="${cols.length}">Výběru neodpovídá žádné území.</td></tr>`;
+$('count').textContent=`Zobrazeno ${rows.length.toLocaleString('cs-CZ')} z ${source.length.toLocaleString('cs-CZ')} území`;
+$('cols').textContent=`${cols.length} sloupců`;
+$('sortHint').textContent=state.sortKey?`Řazení: ${(cols.find(c=>c.key===state.sortKey)?.group?names[cols.find(c=>c.key===state.sortKey).group]+' – ':'')+cols.find(c=>c.key===state.sortKey).label} (${state.sortDir===1?'vzestupně':'sestupně'})`:'Výchozí řazení: MZCHÚ → VZCHÚ → Natura → OP → SCHÚ → VÚ. Klikni na záhlaví sloupce.';
+$('pageInfo').textContent=rows.length?`Strana ${state.page+1} z ${max+1} · ${state.page*len+1}–${Math.min((state.page+1)*len,rows.length)}`:'Žádné výsledky';
+$('prev').disabled=state.page<=0;$('next').disabled=state.page>=max}
+// Celý obsah buněk zobrazujeme v přístupném dialogu; obsah se nikdy nekrátí.
+let currentCellText='';let focusBeforeModal=null;
+function showCell(cell){const tr=cell.closest('tr');const rowIndex=Array.prototype.indexOf.call($('tbody').children,tr);const r=filtered()[state.page*100+rowIndex];const c=columns()[Number(cell.dataset.col)];if(!r||!c)return;
+  currentCellText=displayValue(c,r);focusBeforeModal=document.activeElement;
+  $('modalArea').textContent=String(r.kod??'')+' · '+String(r.nazev??'');
+  $('modalTitle').textContent=(c.group?names[c.group]+' – ':'')+c.label;
+  $('modalContent').textContent=currentCellText||'(prázdná buňka)';
+  $('cellModal').classList.remove('hidden');$('modalCloseTop').focus();
+}
+function hideCell(){$('cellModal').classList.add('hidden');focusBeforeModal?.focus?.()}
+$('thead').addEventListener('click',e=>{const b=e.target.closest('button[data-sort]');if(!b)return;
+  const key=b.dataset.sort;
+  if(state.sortKey!==key){state.sortKey=key;state.sortDir=1}
+  else if(state.sortDir===1){state.sortDir=-1}
+  else{state.sortKey=null;state.sortDir=1}
+  state.page=0;
+  const x=$('tableWrap').scrollLeft;render();$('tableWrap').scrollLeft=x;
+});
+$('tbody').addEventListener('click',e=>{const td=e.target.closest('td[data-col]');if(td)showCell(td)});
+$('tbody').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('td[data-col]')){e.preventDefault();showCell(e.target)}});
+$('modalClose').onclick=hideCell;$('modalCloseTop').onclick=hideCell;
+$('cellModal').addEventListener('click',e=>{if(e.target===$('cellModal'))hideCell()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('cellModal').classList.contains('hidden'))hideCell()});
+$('modalCopy').onclick=async()=>{try{await navigator.clipboard.writeText(currentCellText)}catch(e){const ta=document.createElement('textarea');ta.value=currentCellText;document.body.append(ta);ta.select();document.execCommand('copy');ta.remove()}};
+$('prev').onclick=()=>{state.page--;render();$('tableWrap').scrollTop=0};$('next').onclick=()=>{state.page++;render();$('tableWrap').scrollTop=0};
+// Vytvoření skutečného XLSX bez externích knihoven: ZIP (STORE) + SpreadsheetML.
+const enc=new TextEncoder();
+function crc32(data){let c=0xffffffff;for(const b of data){c^=b;for(let i=0;i<8;i++)c=(c>>>1)^(0xedb88320&-(c&1))}return (c^0xffffffff)>>>0}
+const u16=n=>[n&255,(n>>>8)&255],u32=n=>[n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255];
+function zip(parts){let ofs=0,locals=[],central=[];for(const [name,blob] of parts){const data=enc.encode(blob),nb=enc.encode(name),crc=crc32(data),lh=new Uint8Array([...u32(0x04034b50),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0),...u32(crc),...u32(data.length),...u32(data.length),...u16(nb.length),...u16(0),...nb]);locals.push(lh,data);central.push(new Uint8Array([...u32(0x02014b50),...u16(20),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0),...u32(crc),...u32(data.length),...u32(data.length),...u16(nb.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(ofs),...nb]));ofs+=lh.length+data.length}let cd=central.reduce((a,b)=>a+b.length,0);return new Blob([...locals,...central,new Uint8Array([...u32(0x06054b50),...u16(0),...u16(0),...u16(parts.length),...u16(parts.length),...u32(cd),...u32(ofs),...u16(0)])],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})}
+const xml=s=>String(s??'').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
+function letters(i){let s='';for(i++;i;i=Math.floor((i-1)/26))s=String.fromCharCode(65+(i-1)%26)+s;return s}
+function xlsx(rows,cols){
+ const widths=cols.map(c=>c.kind==='code'?9:c.kind==='cat'?13:c.kind==='name'?32:c.kind==='list-cell'||c.kind==='oop-cell'?46:c.kind==='pct-cell'?11:12);
+ const cs=widths.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('');
+ const xmlRows=['<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane xSplit="3" ySplit="1" topLeftCell="D2" activePane="bottomRight" state="frozen"/></sheetView></sheetViews><cols>'+cs+'</cols><sheetData>'];
+ const indexForCat=cat=>Math.max(0,categories.indexOf(cat));
+ // 0 default; 1 základní hlavička; 2–32 čísla; 33 text;
+ // 34–48 barevná hlavička; 49–63 štítek kategorie;
+ // 64–78 barevná textová pole; 79–543 barevná číselná pole.
+ let line='<row r="1" ht="42" customHeight="1">';
+ cols.forEach((c,i)=>{const style=c.group?34+indexForCat(c.group):1;
+   line+=`<c r="${letters(i)}1" s="${style}" t="inlineStr"><is><t>${xml(c.group?names[c.group]+' – '+c.label:c.label)}</t></is></c>`});
+ xmlRows.push(line+'</row>');
+ for(let j=0;j<rows.length;j++){
+  const r=rows[j];line=`<row r="${j+2}">`;
+  for(let i=0;i<cols.length;i++){
+   const c=cols[i],v=c.val(r),ref=letters(i)+(j+2),catIndex=indexForCat(c.group),catCell=c.key==='cat';
+   if(c.num&&Number.isFinite(Number(v))&&v!==''&&v!==null&&v!==undefined){
+    const raw=Number(v),rounded=roundedText(raw);
+    // Po zaokrouhlení rozhoduje SKUTEČNÝ počet desetinných číslic ve výsledku.
+    // Např. 604,000 -> 604 (formát 0), ale 1,111 -> 1,111 (formát 0.000).
+    // Nepoužívat 0.###: Excel může zobrazit samotnou desetinnou čárku (604,).
+    const fraction=rounded.match(/\.(\d+)$/);
+    const actualDecimals=fraction?fraction[1].length:0;
+    if(actualDecimals<=30){const style=c.group?79+catIndex*31+actualDecimals:2+actualDecimals;line+=`<c r="${ref}" s="${style}" t="n"><v>${rounded}</v></c>`}
+    else{const style=c.group?64+catIndex:33;line+=`<c r="${ref}" s="${style}" t="inlineStr"><is><t>${xml(rounded)}</t></is></c>`}
+   }else{
+    let value=displayValue(c,r);if(value.length>32760)value=value.slice(0,32730)+'… [výpis zkrácen pro limit Excelu]';
+    const style=catCell?49+indexForCat(r.kategorie):c.group?64+catIndex:33;
+    line+=`<c r="${ref}" s="${style}" t="inlineStr"><is><t>${xml(value)}</t></is></c>`;
+   }
+  }
+  xmlRows.push(line+'</row>');
+ }
+ xmlRows.push('</sheetData><autoFilter ref="A1:'+letters(cols.length-1)+(rows.length+1)+'"/></worksheet>');
+ const fills=['<fill><patternFill patternType="none"/></fill>','<fill><patternFill patternType="gray125"/></fill>',
+   '<fill><patternFill patternType="solid"><fgColor rgb="FF245365"/></patternFill></fill>',
+   '<fill><patternFill patternType="solid"><fgColor rgb="FFF7F9FA"/></patternFill></fill>'];
+ for(const cat of categories){const [dark,light]=catPalette[cat];
+   fills.push(`<fill><patternFill patternType="solid"><fgColor rgb="FF${dark}"/></patternFill></fill>`);
+   fills.push(`<fill><patternFill patternType="solid"><fgColor rgb="FF${light}"/></patternFill></fill>`);
+ }
+ // Paleta používá fillId=4+2*i (tmavá) a 5+2*i (světlá).
+ const xf=(numFmtId,fillId,fontId=0,isNum=false)=>`<xf numFmtId="${numFmtId}" fontId="${fontId}" fillId="${fillId}" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" ${isNum?'applyNumberFormat="1"':''}><alignment ${isNum?'horizontal="right"':'vertical="center"'}/></xf>`;
+ const baseStyles=['<xf numFmtId="0" xfId="0"/>',
+  '<xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1"><alignment wrapText="1" vertical="center"/></xf>'];
+ for(let d=0;d<=30;d++)baseStyles.push(xf(164+d,3,0,true));
+ baseStyles.push(xf(0,3));
+ // Barevné záhlaví - tmavá výplň; kategorie řádků - světle podbarvený tučný text.
+ for(let i=0;i<categories.length;i++)baseStyles.push(`<xf numFmtId="0" fontId="1" fillId="${4+2*i}" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1"><alignment wrapText="1" vertical="center"/></xf>`);
+ for(let i=0;i<categories.length;i++)baseStyles.push(xf(0,5+2*i,2));
+ for(let i=0;i<categories.length;i++)baseStyles.push(xf(0,5+2*i));
+ for(let i=0;i<categories.length;i++)for(let d=0;d<=30;d++)baseStyles.push(xf(164+d,5+2*i,0,true));
+ const stylesXml='<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+
+  '<numFmts count="31">'+Array.from({length:31},(_,d)=>`<numFmt numFmtId="${164+d}" formatCode="${d?'0.'+'0'.repeat(d):'0'}"/>`).join('')+'</numFmts>'+
+  '<fonts count="3"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FF253740"/><name val="Calibri"/></font></fonts>'+
+  `<fills count="${fills.length}">${fills.join('')}</fills>`+
+  '<borders count="2"><border/><border><bottom style="thin"><color rgb="FFDCE6EA"/></bottom></border></borders><cellStyleXfs count="1"><xf numFmtId="0"/></cellStyleXfs>'+
+  `<cellXfs count="${baseStyles.length}">${baseStyles.join('')}</cellXfs>`+
+  '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+ const parts=[['[Content_Types].xml','<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'],
+ ['_rels/.rels','<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'],
+ ['xl/workbook.xml','<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Vybraný pohled" sheetId="1" r:id="rId1"/></sheets></workbook>'],
+ ['xl/_rels/workbook.xml.rels','<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'],
+ ['xl/worksheets/sheet1.xml',xmlRows.join('')],['xl/styles.xml',stylesXml]];
+ return zip(parts)
+}
+$('download').onclick=()=>{const b=$('download'),rows=filtered(),cols=columns();if(!rows.length){alert('Není vybráno žádné území.');return}b.disabled=true;b.textContent='Připravuji XLSX…';setTimeout(()=>{try{const blob=xlsx(rows,cols),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='prekryvy_vybrany_pohled.xlsx';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),120000)}catch(e){alert('Export XLSX selhal: '+e.message)}finally{b.disabled=false;b.textContent='↓ Stáhnout zobrazený pohled (XLSX)'}},30)};
+$('metadata').textContent='Úplný výpočet ČR · '+source.length.toLocaleString('cs-CZ')+' území · geometrické překryvy a působnost OOP';
+render();
+</script></body></html>

@@ -1,0 +1,27 @@
+# Vstupní data mohou být velká; obsah se ověřuje proti manifestům.
+cache/
+# Interní geometrii hranic a chyby nikdy automaticky necommitovat.
+diagnostika/
+# Generované výsledky mohou být velké, týdenní XLSX ukládají Releases.
+vystupy/
+site/
+*.previous
+*_OOP_DIAGNOSTIKA.csv
+.Rhistory
+.RData
+.Rproj.user/
+# Exporty DR USOP z interaktivniho webu: radsi samostatne mimo verejny repo
+/drusop_exporty/
+
+# Nezverejnovat ručně exportovanou celostatni DR USOP evidenci bez kontroly licence.
+/drusop_oop.txt
+# Jine nazvy diagnostiky nebo uzivatelske exporty
+*diagnostika_aktualni.xlsx
+*prekryvy_nezadouci.gpkg
+
+# Lokální úplné výpočty a testy: zachovat na disku, neposílat do Gitu.
+/prekryvy_aktualni.xlsx
+/test_v*.xlsx
+/index_prekryvy_lokalni.html
+# Případné pracovní archivy v kořeni projektu.
+/*.zip
