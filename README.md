@@ -1,146 +1,84 @@
-# Překryvy chráněných území – v0.6.3 (k ověření v R)
+# Překryvy chráněných území ČR
 
-## Novinky v0.6.3
+**Otevřený nástroj pro výpočet a prohlížení prostorových překryvů chráněných území České republiky.** Z veřejných geografických dat AOPK ČR a ČÚZK sestavuje přehled, která území se překrývají, v jakém rozsahu a které orgány ochrany přírody na jejich plochách podle geometrického modelu působí. Současně umožňuje vyhledávat nesoulady v podkladových geometriích.
 
-- **Geometrické OOP a DR ÚSOP zůstávají nezávislé.** Evidence nikdy nepřepisuje GIS. Souhrnný počet OOP a řetězec `OOP_souhrn` nyní vynechává mikrofragmenty (`plocha < 1 m²` **a současně** `< 0,001 % plochy území`). Přesná výměra těchto fragmentů zůstává v detailním listu `OOP_podle_uradu` a v interní `DRUSOP_kontrola`.
-- Interní stavy: `SHODA`, `MIKROFRAGMENT`, `DILCI_PUSOBNOST`, `ROZDIL_K_PROVERENI`, další stavy pro chybějící export. `DILCI_PUSOBNOST` pouze znamená, že geometricky existuje další významný OOP vedle evidovaného; skutečný právní důvod se musí ověřit. Případy PUOS **nevyhodnocujeme**.
-- **Dlouhé české hlavičky v Excelu**: původní strojový název každého pole zůstává v `[hranatých závorkách]`. Mění se pouze hlavičky exportu, ne názvy proměnných ani veřejné JSON API. Návazné externí skripty čtoucí Excel podle přesného názvu původního sloupce je potřeba upravit.
-- Interní `Nesoulady_po_uzemich`: součet ploch a počet fragmentů za území a typ geometrického nesouladu. Opraveny názvy vrstev v diagnostice přesahů.
-- Datum DR ÚSOP: bez explicitního parametru použijeme z vlastnosti souboru **datum poslední změny**, nikoli doložené datum exportu. Kopírování jej může změnit. Ruční export je nadále třeba aktualizovat.
-- GitHub: obnovitelná ověřená mezipaměť, horní limit uloženého objemu 250 MiB. Před použitím cache se ověří `editingInfo.lastEditDate` nebo `zmenaG` a identifikátory. Pokud žádný spolehlivý změnový údaj služba neposkytuje, vrstva se plně stáhne. Starší nevyužité verze cache nechává uklidit GitHub. GitHub Actions i bez cache musí fungovat.
-- Pro offline otevření webu nadále platí samostatný lokální HTML export z minulé verze; standardní `site/index.html` používá JSON a vyžaduje HTTP server nebo GitHub Pages.
+Projekt je **nezávislá analytická pomůcka, nikoli úřední evidence nebo závazný právní výklad**. Výsledky závisejí na aktuálnosti a přesnosti použitých dat i na zjednodušeních popsaných níže.
 
-### Příkazy v Git Bash (Windows)
+## Co lze zjistit
+
+- **Překryvy území:** seznam překrývajících se lokalit, jejich počet, společnou plochu (ha) a podíl výměry cílového území (%). Plochy překryvů s celou kategorií jsou počítány z **geometrického sjednocení** jednotlivých průniků, aby se stejná plocha nezapočetla vícekrát.
+- **Působnost OOP:** přehled orgánů ochrany přírody geometricky přiřazených k ploše daného území, včetně jejich podílů; nepřisuzuje se automaticky jediný úřad celé lokalitě.
+- **Diagnostika dat:** neplatné geometrie, přesahy přes hranici ČR, mezery a nesoulady v geometrickém modelu OOP a vzájemné překryvy území, která se běžně překrývat nemají (MZCHÚ, VZCHÚ, EVL).
+- **Veřejná webová tabulka:** výběr řádků podle kategorií nebo kódů/názvů, volba kategorií překryvů a zobrazovaných údajů, řazení podle sloupců, zobrazení celého obsahu buněk a export aktuálního pohledu do XLSX.
+
+Zahrnuty jsou NPR, NPP, PR, PP, NP, CHKO, EVL, ptačí oblasti, ochranná pásma ZCHÚ, smluvně chráněná území a vojenské újezdy. Kategorie jsou v přehledech seskupeny zpravidla jako **MZCHÚ → VZCHÚ → Natura 2000 → ochranná pásma → SCHÚ → vojenské újezdy**.
+
+## Jak výpočet funguje
+
+1. **Načtení a ověření vstupů:** veřejné vrstvy chráněných území a působnosti regionálních pracovišť AOPK ČR se získávají z ArcGIS REST AOPK ČR; kraje a vojenské újezdy z dat ČÚZK/RÚIAN. Cache omezuje opakované stahování, ale nesmí nahrazovat kontrolu aktuálnosti a úplnosti zdroje.
+2. **Sjednocení geometrií:** výpočty probíhají v **S-JTSK (EPSG:5514)**. Podkladové polygony se ořezávají na sjednocenou hranici krajů ČÚZK, aby se v českých výměrách nezapočítávaly přesahy do zahraničí. Neplatné geometrie se pro výpočet technicky opravují a zaznamenávají v diagnostice.
+3. **Prostorové průniky:** každé cílové území se porovnává se všemi referenčními územími. Vedle detailních dvojic se počítají souhrny po kategoriích.
+4. **Geometrický model OOP:** z příslušných polygonových vrstev se odvozují části lokalit spadající do působnosti újezdních úřadů, správ NP, AOPK ČR a krajských úřadů. Používá se prioritní přiřazování podle územní a věcné působnosti, aby se plocha nedvojila.
+5. **Nezávislá interní kontrola:** při zadání ručního exportu `drusop_oop.txt` lze vypočtené OOP porovnat s evidovanými OOP v DR ÚSOP. **Evidence DR ÚSOP nepřepisuje geometrický výpočet** a rozdíl obou zdrojů sám o sobě neznamená chybu.
+
+### Důležitá omezení
+
+- **PUOS není do modelu zapracována.** Geometricky odvozený OOP proto nelze bez dalšího považovat za právně závazné určení příslušného úřadu.
+- Hranice vycházejí z digitálních zdrojů; geometrický překryv nebo neplatnost polygonu automaticky nedokazuje nesprávné právní vyhlášení.
+- Velmi malé vedlejší fragmenty OOP (současně méně než 1 m² a méně než 0,001 % lokality) se nezobrazují jako další významný OOP v hlavním souhrnu, ale zůstávají v detailních datech a diagnostice.
+- Referenční DR ÚSOP je **ručně pořizovaný export**. V diagnostice se uvádí datum poslední změny jeho souboru, což nemusí být datum skutečného exportu.
+
+## Výstupy
+
+| Umístění | Účel |
+|---|---|
+| `prekryvy_aktualni.xlsx` (nebo cesta z `--out`) | Veřejná analytická tabulka; hlavní list `Souhrn_po_uzemich`, detaily průniků, souhrny kategorií, geometrické OOP, metodika a zdroje |
+| `site/index.html` a související soubory | Veřejný interaktivní přehled, určený i pro publikaci na GitHub Pages |
+| `diagnostika/diagnostika_aktualni.xlsx` | Interní souhrn kontroly geometrie, topologie a (v režimu `both`) DR ÚSOP |
+| `diagnostika/*.gpkg` | Geometrie nesouladů pro kontrolu v GIS |
+| `cache/` | Pomocná mezipaměť vstupních dat, nikoli archiv finálních výsledků |
+
+V GitHub Actions je zamýšlen **týdenní veřejný výpočet** a zveřejnění stránky přes GitHub Pages; datované XLSX se mohou archivovat v GitHub Releases. Interní diagnostika ani ruční export DR ÚSOP se nemají publikovat. **Automatický běh je nutné ověřit prvním úspěšným spuštěním na GitHubu**; místní testy samy o sobě nezaručují běh na serveru GitHubu.
+
+## Spuštění na vlastním počítači
+
+Potřebujete R a knihovny `sf`, `dplyr`, `httr`, `jsonlite` a `openxlsx` (podle použitého režimu také další balíčky). Příkazy se spouštějí ve složce projektu v terminálu RStudia nebo Git Bash, **ne** v R Console.
 
 ```bash
+# Rychlá kontrola syntaxe
 Rscript -e "invisible(parse(file='prekryvy_uzemi.R')); cat('SYNTAXE OK\n')"
-Rscript prekryvy_uzemi.R --test=true --sample-n=10 --mode=both --drusop=true --drusop-file=drusop_oop.txt --out=test_v063.xlsx
-Rscript tests/overeni_v063.R test_v063.xlsx diagnostika/diagnostika_aktualni.xlsx
-```
 
-**Před prvním testem zavřete otevřené Excely diagnostiky**; při uzamčení Nextcloud je nový soubor uložen s příponou `_pripraveno_...xlsx` a pro třetí příkaz se musí použít tento skutečný název. Neprovádět automaticky plný běh, dokud test neprojde.
+# Test: 10 cílových území z každé kategorie, proti všem referenčním územím
+Rscript prekryvy_uzemi.R --test=true --sample-n=10 --mode=both --drusop=true --drusop-file=drusop_oop.txt --out=test_v0651.xlsx
 
-### GitHub
+# Kontrola struktury vytvořených Excelů
+Rscript tests/overeni_v063.R test_v0651.xlsx diagnostika/diagnostika_aktualni.xlsx
 
-GitHub Actions běží jen s `--mode=public` a nikdy nesmí publikovat `diagnostika/` ani `drusop_oop.txt`. Cache je kontrolována proti zdroji; absence změnového údaje automaticky znamená nové stažení. Nasazení na GitHubu je třeba jednou ověřit ručně.
+# Úplný veřejný výstup bez interní diagnostiky / bez DR ÚSOP
+Rscript prekryvy_uzemi.R --test=false --mode=public --out=prekryvy_aktualni.xlsx
 
----
+# Úplný výstup včetně interní diagnostiky a kontroly DR ÚSOP
+Rscript prekryvy_uzemi.R --test=false --mode=both --drusop=true --drusop-file=drusop_oop.txt --out=prekryvy_aktualni.xlsx
 
-# Oprava v0.6.2 – Nextcloud je cílové úložiště
-
-Výchozí adresář diagnostiky je stále `diagnostika/` uvnitř repozitáře na Nextcloudu. `C:/GIS_diagnostika` není potřebný, automaticky se nečistí a nemusí se vůbec používat. Program nyní předem vytváří cílovou složku a ověřuje její existenci. Pracovní soubory XLSX/GPKG vznikají v místním systémovém `tempdir()` mimo Nextcloud. Až po jejich úplném dokončení je program kopíruje do jedinečně pojmenovaného hotového souboru v cílové složce a pokouší se nahradit stabilní název. Pokud jej Windows/Nextcloud blokuje, nová verze zůstane uložená pod jednoznačným náhradním názvem a její cestu program vypíše. Starý stabilní soubor se pak nepovažuje za aktuální. Lokální pracovní soubory program po úspěšném předání odstraňuje. Pro veřejné XLSX nadále platí předchozí mechanismus zápisu, proto jej při otevřeném Excelu zavřít.
-
-Doporučený test v Git Bash, v existující složce `~/Nextcloud/git/prekryvy_uzemi`:
-
-```bash
-Rscript -e "invisible(parse(file='prekryvy_uzemi.R')); cat('SYNTAXE OK\n')"
+# Pouze geometrická/topologická diagnostika
 Rscript prekryvy_uzemi.R --mode=diagnostic
 ```
 
-Výstup: `diagnostika/diagnostika_aktualni.xlsx` a diagnostické GPKG, případně jiné názvy výslovně vypsané při konfliktu. V tomto režimu se **nekontroluje DRÚSOP ani geometrické přiřazení OOP** – ty vyžadují `--mode=both`. V případě potřeby druhý test:
+Pokud Windows, Excel nebo Nextcloud při zápisu uzamkne diagnostický soubor, skript může uložit novou verzi s příponou `_pripraveno_...` a vypíše její cestu. Starý soubor pod stabilním názvem pak **nepovažujte za aktuální**.
 
-```bash
-Rscript prekryvy_uzemi.R --test=true --sample-n=10 --mode=both --drusop=true --drusop-file=drusop_oop.txt --out=test_v062.xlsx
-Rscript tests/overeni_v060.R test_v062.xlsx diagnostika/diagnostika_aktualni.xlsx
-```
+## Datové zdroje, původ a licence
 
-U obou příkazů zachovat již vytvořenou cache; čas získání podkladů se řídí stávajícím pravidlem. V R není zde v prostředí dostupný interpret, proto vyžadují skutečné ověření na Windows.
+Výpočet používá především:
 
-## Historie předchozích verzí
+- **AOPK ČR – otevřené geografické vrstvy:** [Poskytování dat AOPK ČR](https://data.nature.cz/), [ArcGIS REST Opendata](https://gis.nature.cz/arcgis/rest/services/Aplikace/Opendata/MapServer). Příslušné otevřené datové sady jsou zveřejňovány pod **Creative Commons Uveďte původ 4.0 (CC BY 4.0)**; požadované označení původu je **© AOPK ČR**. Podmínky konkrétní vrstvy je třeba kontrolovat v její metadatové kartě.
+- **ČÚZK – hranice krajů a vojenských újezdů z RÚIAN:** [Otevřená data ČÚZK](https://www.cuzk.gov.cz/Uvod/Produkty-a-sluzby/Otevrena-data/Otevrena-data-zakladni-informace.aspx), [licenční podmínky](https://www.cuzk.gov.cz/Predpisy/Podminky-poskytovani-prostor-dat-a-sitovych-sluzeb/Podminky-poskytovani-prostorovych-dat-CUZK.aspx). Otevřená prostorová data jsou poskytována pod **CC BY 4.0**; u výstupů se zdroj uvádí jako **„ČÚZK, [rok aktuálnosti dat]“**.
 
-Výchozí provozní režim počítá překryvy všech území se všemi; testovací režim vybírá 10 cílů z každé kategorie proti úplným referenčním vrstvám. Interní diagnostika zachovává původní geometrie. Všechny GIS operace probíhají v EPSG:5514. Při chybě povinných vrstev se finální XLSX nevytvoří.
+Data jsou **geometricky upravována** (ořez na ČR, opravy technicky neplatných geometrií, průniky, sjednocení a agregace); výsledky tedy nejsou nepozměněným přepisem zdrojových vrstev. Licence **MIT** v souboru [`LICENSE`](LICENSE) se týká **pouze původního programu a dokumentace**, nikoli podkladových dat AOPK/ČÚZK, případných výřezů těchto dat v testovacích souborech ani práv poskytovatelů k nim. Při šíření dat a odvozených výstupů je nutné dodržet podmínky příslušných datových sad včetně uvedení zdroje, licence, odkazu a provedených změn.
 
-## Oprava v0.6.1 – Nextcloud a uzamcene diagnosticke soubory
+## Jak projekt vznikl
 
-Na Windows muze Nextcloud, Excel ci GIS docasne uzamknout cilovy XLSX/GPKG. Skript se pokusi o bezpecnou vymenu 3x. Pokud cil stale nelze prepsat, novy **interni** soubor ulozi pod jedinecnym nazvem do `diagnostika/`, vypise `ZAMENY SOUBORU` a **stary soubor s nazvem `*_aktualni` neni aktualni**. Interni souhrn cte skutecne nove soubory a uvadi skutecne jmeno GPKG topologie. Nezamenujte tedy vychozi stary soubor s novym. Pri prvnim overeni doporucujeme vypnout synchronizaci nebo pouzit lokalni diagnosticky adresar mimo Nextcloud: `--diagnostic-dir=C:/GIS_diagnostika` (parametry se pisou s pomlckami; pomocny parser je prevadi na podtrzitka).
+Nástroj vznikal **iterativní spoluprací zadavatele projektu s ChatGPT (OpenAI)**: zadavatel formuloval požadavky na GIS analýzu, metodiku OOP, formát Excelu, diagnostiku a web; ChatGPT pomáhal navrhovat a upravovat R skripty a webové rozhraní. Následovaly skutečné místní testy, kontrola výsledků a opakované opravy na základě zjištěných chyb a připomínek. Nejde tedy o jednorázově vygenerovaný kód bez ověřování, ale zároveň žádná taková spolupráce nenahrazuje odbornou validaci dat a právního významu výstupů.
 
-## Novinky v0.6.0 – oddělení publikace od diagnostiky
+Správu repozitáře, commity a publikaci provádí jeho vlastník; ChatGPT **nemá přístup k účtu GitHub ani oprávnění samostatně odesílat změny**. Přenos aktualizací probíhá typicky jako malý ZIP obsahující jen trvalé změněné soubory, který vlastník rozbalí, zkontroluje a sám commituje.
 
-- `--mode=public`: pouze veřejný Excel a `site/`; žádná kontrola DR ÚSOP ani interní geometrie. Veřejný souhrn neobsahuje `OOP_DRUSOP`, `OOP_shoda`, `DRUSOP_*`, `OOP_pouze_*` ani listy `DRUSOP_kontrola` a `OOP_kontrola`. Geometricky vypočítané OOP a jejich podíly zůstávají.
-- `--mode=both`: navíc interní `diagnostika/diagnostika_aktualni.xlsx` s kontrolami DR ÚSOP, stavem geometrického modelu OOP, neplatnými geometriemi, dalšími nesoulady a třemi topologickými kontrolami; související geometrie jsou v oddělených GeoPackage souborech.
-- `--mode=diagnostic`: pouze interní kontrola geometrií a vzájemných překryvů všech evidovaných území bez veřejného výsledku. Kontrola DR ÚSOP / geografického OOP v tomto zrychleném režimu neprobíhá, protože se nepřepočítává model OOP; pro tuto kontrolu použít `both`.
-- Topologie: `Prekryvy_MZCHU` (NPR/NPP/PR/PP), `Prekryvy_VZCHU` (NP/CHKO), `Prekryvy_EVL` (EVL). Srovnává se každá dvojice odlišných území bez ohledu na vzorkování cílů; společná hranice bez plochy se nezapisuje. Rozlišení mikropřekryvů lze měnit `--diagnostic-min-area-m2` (výchozí 0,01 m²). Nález automaticky neznamená právní chybu.
-- **Datum exportu DR ÚSOP je ruční údaj**: předejte `--drusop-export-date=YYYY-MM-DD` (den pořízení exportu, nikoli den importu). Není-li uvedeno, bude `NEZJISTENO`. Interní list `Informace` výslovně upozorňuje, že se export automaticky neaktualizuje.
-- Dosavadní jednotlivé soubory interních kontrol zůstávají pro mapovou diagnostiku; `diagnostika_aktualni.xlsx` je jejich společný tabulkový rozcestník.
-
-Příklad lokálního testu:
-
-```bash
-Rscript prekryvy_uzemi.R --test=true --sample-n=10 --mode=both --drusop=true \
-  --drusop-file=drusop_oop.txt --drusop-export-date=2026-11-11 --out=test_v060.xlsx
-Rscript tests/overeni_v060.R test_v060.xlsx diagnostika/diagnostika_aktualni.xlsx
-```
-
-**GitHub:** existující `.github/workflows/tydenni-vypocet.yml` již obsahuje pondělní automatický běh `--mode=public` a přímé publikování artefaktu z `site/` na GitHub Pages. Není nutné přepínat Pages na `/docs`; v nastavení Pages zvolte zdroj **GitHub Actions**. Před prvním zveřejněním zkontrolujte veřejné soubory a spusťte plný výpočet.
-
-**Omezení ověření:** zde nebylo dostupné R/Rscript; změny vyžadují spuštění výše uvedených testů v prostředí s R, sf a ostatními knihovnami. Verze zatím není validovaná provozním během.
-
-## Novinky v0.5.9
-
-- **Jediný společný soubor DR ÚSOP:** uložit `drusop_oop.txt` do pracovní složky, spustit `--drusop=true` (nebo výslovně `--drusop-file=drusop_oop.txt`). Skript načte všechny kategorie v jednom exportu; kontroluje počty přes `COUNT:`, rozlišuje kód **i kategorii**, srovnává více OOP a eviduje odlišné pojmenování. Vypočtený geografický OOP nikdy nepřepisuje. Starý režim s 5 exporty zůstává jako alternativa, pokud `drusop_oop.txt` ve WD není.
-- **Třetí strana pro kontrolu:** `tests/overeni_jednotneho_DRUSOP.R` lze spustit bez GIS a internetu, aby se chyba vstupního souboru projevila před několikahodinovým výpočtem.
-
-## Ostatní změny z v0.5.8
-
-- **OOP podle věcné příslušnosti:** krajský úřad se nikdy nesmí objevit jako OOP pro CHKO, NPR, NPP, OP_NPR, OP_NPP, NP nebo OP_NP. Nejde o potlačení podle malé velikosti. Nepřiřazené fragmenty se nevydávají za jiný úřad. Je-li v testovaném cíli nalezen geometrický kandidát KÚ, ale jeho přiřazení je podle kategorie nepřípustné, uloží se v režimu `both` do `diagnostika/nepripustne_OOP_kraje.gpkg` k mapové kontrole. Není-li fragment viditelný, nemusí být chybně vyhlášeno území; může jít o numerický mikrozbytek.
-- **Blízkost 100 %:** při velmi těsné shodě výměr se dodatečně prověří rozdíl skutečných geometrií. V listu `Souhrn_po_kategoriich` je `presnost_vypoctu`: geometricky úplné pokrytí s numerickým rozdílem výměry vs. skutečný rozdílový polygon. Velmi malé polygony se neoznačují automaticky jako chyby jen proto, že jsou malé. V detailních listech zůstávají nezaokrouhlené hodnoty.
-- **Excel:** první řádek a první dva sloupce tučně, řádky stejné výšky 25 bodů, první řádek a první dva sloupce ukotveny, druhý sloupec zúžen na šířku 29 znaků. Každý blok kategorie má odlišné čitelné tlumené podbarvení, včetně všech pokračovacích sloupců. URL na kartu DR ÚSOP je jen jednou.
-- **DR ÚSOP:** místo nefunkčního čtení OOP z jednotlivých karet používáme **hromadné tabulkové exporty** se sloupci `Kód` a `Orgán(y) ochrany přírody`. Tyto údaje jsou zcela nezávislé na GIS modelu OOP.
-
-## Rychlý test v RStudiu / Git Bash
-
-```bash
-Rscript -e "invisible(parse(file='prekryvy_uzemi.R')); cat('SYNTAXE OK\n')"
-Rscript tests/overeni_jednotneho_DRUSOP.R drusop_oop.txt
-Rscript prekryvy_uzemi.R --self-test-geometrie=true
-Rscript prekryvy_uzemi.R --test=true --sample-n=10 --mode=both --drusop=true --out=test_v059.xlsx
-Rscript tests/overeni_v059.R test_v059.xlsx
-```
-
-### OOP z DR ÚSOP – JEDINÝ celostátní TXT (doporučeno)
-
-1. Ulož soubor `drusop_oop.txt` do stejné pracovní složky, v níž spouštíš `Rscript` (`getwd()` v RStudiu); není nutné jej převádět do UTF-8. Původní export je CP1250, oddělený tabulátory.
-2. Ověř čistě lokální import: `Rscript tests/overeni_jednotneho_DRUSOP.R drusop_oop.txt`.
-3. Spusť úplný test: `Rscript prekryvy_uzemi.R --test=true --sample-n=10 --mode=both --drusop=true --drusop-file=drusop_oop.txt --out=test_v059.xlsx`.
-4. Kontrolu XLSX: `Rscript tests/overeni_v059.R test_v059.xlsx`.
-
-**Ještě rychlejší kontrola bez nového GIS výpočtu:** pro už hotový `test_v058.xlsx` je připraven samostatný pomocný skript:
-
-```bash
-Rscript kontrola_drusop_z_xlsx.R --in=test_v058.xlsx --drusop-file=drusop_oop.txt --out=kontrola_drusop_v058.xlsx
-```
-
-Výsledek je nový menší XLSX s porovnáním OOP všech 130 testovaných území. Původní soubor zůstane beze změny. Tento skript potřebuje jen `openxlsx` a nepotřebuje GIS ani internet. V aktuálním dodaném exportu: 67 shod, 17 rozdílů k prověření a 46 bez samostatného záznamu (ověřeno nezávislou kontrolou souborů).
-
-Import ignoruje památné stromy pro náš polygonový model, ale ověřuje počet všech řádků v exportu. V samotném XLSX pro ochranná pásma a vojenské újezdy vypíše `BEZ_SAMOSTATNEHO_ZAZNAMU`, nikoliv neexistující OOP. Exportované informace mohou být starší než živá GIS data; kódy, které už v exportu nejsou, dostanou stav `KOD_NENALEZEN_V_EXPORTU` a **nepřepisují** geografický výpočet. Další položky `OOP_pouze_DRUSOP` a `OOP_pouze_geo` pomáhají konkrétně lokalizovat rozdíl.
-
-Při publikaci na veřejném GitHubu je soubor `drusop_oop.txt` výslovně uveden v `.gitignore`; před případným publikováním hromadného exportu je třeba prověřit licenční podmínky.
-
-### Starší možnost: exporty oddělené podle evidencí
-
-1. V jednotlivých přehledech DR ÚSOP (EVL, PO, MZCHÚ, VZCHÚ, SCHÚ) zvolte `Export` → `Vše`, zaškrtněte minimálně **Kód** a **Orgán ochrany přírody**, uložte ve formátu `Excel (Tabbed)` (nebo `xlsx/csv`). Ideálně také `Kategorie`, pokud existuje.
-2. Nerozbalené exportní tabulky dejte do `drusop_exporty/` s názvy obsahujícími `EVL`, `PO`, `MZCHU`, `VZCHU`, `SCHU` (např. `EVL.xls`, `PO.xls`). U `Excel (Tabbed)` může jít o tabulátory oddělený text, i když má soubor příponu `.xls`.
-3. Spusťte:
-
-```bash
-Rscript prekryvy_uzemi.R --test=true --sample-n=10 --mode=both --drusop=true --drusop-export-dir=drusop_exporty --out=test_v058_drusop.xlsx
-Rscript tests/overeni_v059.R test_v058_drusop.xlsx
-```
-
-Pokud export chybí, stav OOP v DR ÚSOP bude `EXPORT_CHYBI`, nikdy domyšlená hodnota. Duplicitní kódy v jednom exportu nebo absence povinných sloupců způsobí chybu. Nejdříve je nutné vždy ověřit, zda export skutečně obsahuje všechny záznamy, a nikoliv jen aktuální stránku. Počty exportů skript vypisuje do terminálu.
-
-**Přímé automatické stažení z webového formuláře zatím není dokončené.** AOPK dokumentuje interaktivní export, nikoli stabilní HTTP API, a dostupný webový nástroj mi neposkytl samotnou odpověď po stisku tlačítka Exportovat. Neslibuji, že lze použít adresu s `EXPORT_ALL_step=1` jako přímý soubor. Pro automatizaci budeme potřebovat zachytit skutečný exportní HTTP požadavek (například v DevTools → Network → Copy as cURL) a ověřit, zda nepotřebuje cookies/session.
-
-### Další metodická upozornění
-
-PUOS mimo vojenské újezdy stále nejsou zahrnuty. Území se ořezávají podle sjednocení krajů ČÚZK, jejichž geometrie je pracovním referenčním podkladem, nikoli právně rozhodujícím hraničním dokumentárním dílem. Drobné mezery mezi maskou AOPK a RP nejsou samostatným OOP; jejich geometrii ukládáme pro interní analýzu. Diagnostické GPKG nikdy nezveřejňujte automaticky na veřejném GitHubu. Kontrola aktualizací podle `ZMENA_G` ještě není implementována; používá se ověřená časová cache.
-
-**Status:** v prostředí tvorby nebylo dostupné R, takže nová verze ještě nebyla spuštěna nad skutečnými daty a je určena nejprve k lokálnímu testu.
-
-## Nový veřejný web (v0.6.4)
-Po běhu s `--mode=public` nebo `--mode=both` vzniká `site/index.html` s plnými daty přímo v souboru. Lze otevřít dvojklikem bez lokálního serveru. Nad tabulkou lze filtrovat řádky (kategorie, seznam názvů/kódů oddělený středníky), zapínat skupiny sloupců a exportovat aktuální výběr do XLSX. Export zahrnuje i řádky mimo aktuální stránku tabulky. Webová šablona se nachází v `web/index_template.html` a musí zůstat ve složce projektu.
-
-**Test bez opětovného plného výpočtu:** samostatný demonstrační `index.html` z minulé verze dat lze otestovat nezávisle. Nová šablona se automaticky použije při dalším běhu R skriptu.
-
-## v0.6.5
-Pravidlo zaokrouhlování a přesné příkazy: `PO_NAVRATU_POKRACOVAT_ZDE.md`.
+Podrobnosti o vývoji, změnách verzí a dřívějších provozních instrukcích jsou v [`CHANGELOG.md`](CHANGELOG.md).

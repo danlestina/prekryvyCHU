@@ -19,3 +19,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+POZNÁMKA K DATŮM TŘETÍCH STRAN / THIRD-PARTY DATA NOTICE
+
+Výše uvedená licence MIT upravuje původní software a dokumentaci tohoto
+repozitáře. Neuděluje práva k podkladovým datům třetích stran, jejich kopiím,
+výřezům nebo odvozeným datovým produktům nad rámec licencí poskytovatelů.
+
+AOPK ČR:
+Otevřené geografické datové sady využívané tímto projektem jsou poskytovány
+pod licencí Creative Commons Uveďte původ 4.0 Mezinárodní (CC BY 4.0),
+pokud konkrétní metadatová karta nestanoví jinak.
+Požadované označení původu: © AOPK ČR.
+Katalog a metadata: https://data.nature.cz/
+Licence: https://creativecommons.org/licenses/by/4.0/
+
+ČÚZK / RÚIAN:
+Otevřená prostorová data ČÚZK jsou poskytována pod licencí CC BY 4.0.
+U výstupů a prohlížecích služeb se požaduje označení "ČÚZK, [rok]",
+kde rok odpovídá aktuálnosti použitého datového souboru.
+Podmínky: https://www.cuzk.gov.cz/Predpisy/Podminky-poskytovani-prostor-dat-a-sitovych-sluzeb/Podminky-poskytovani-prostorovych-dat-CUZK.aspx
+Licence: https://creativecommons.org/licenses/by/4.0/
+
+Projekt vstupní geometrie zpracovává (mj. ořez na hranice ČR, opravy
+technických chyb polygonů, výpočet průniků, sjednocování a agregace).
+Při dalším šíření dat či odvozených výstupů uveďte původ, odkaz na
+podmínky licence a informaci, že data byla upravena. V případě potřeby
+se řiďte také metadaty jednotlivých použitých sad.
+
+Tyto informace nejsou změnou textu licence MIT uvedené výše.
